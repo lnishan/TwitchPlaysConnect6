@@ -1,0 +1,4 @@
+0 board.png
+1 black.png
+2 white.png
+6 background.png
