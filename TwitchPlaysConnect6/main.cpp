@@ -23,6 +23,7 @@
 
 #define C_INP_TWI 0
 #define C_INP_AI 1
+#define C_INP_MOU 2
 
 #define C_TWI_LATENCY 12000 // ms
 #define C_TWI_DECIDE 10000 // ms
@@ -31,7 +32,7 @@ using namespace std;
 
 TwitchPlays *tClientPtr;
 
-int P1 = C_INP_AI, P2 = C_INP_AI;
+int P1 = C_INP_MOU, P2 = C_INP_AI;
 bool output = !(P1 == C_INP_AI && P2 == C_INP_AI);
 
 const double oriX = 99.0f, oriY = 165.0f;
@@ -47,6 +48,7 @@ bool acceptTwitchInput = false;
 clock_t latencyClk, decideClk;
 const int mx[8] = {0, -1, -1, -1, 1, 1, 1, 0};
 const int my[8] = {1, 1, 0, -1, 1, 0, -1, -1};
+int mouseUpX, mouseUpY;
 
 void (*funcAI)(short [COORDS+1][COORDS+1], short, int &, int &);
 
@@ -71,6 +73,12 @@ bool valid(const int &n)
 	return n >= 1 && n <= COORDS;
 }
 
+bool valid(const int &X, const int &Y)
+{
+	return X >= 1 && X <= COORDS &&
+		Y >= 1 && Y <= COORDS;
+}
+
 void genCoord()
 {
 	int i, j;
@@ -90,6 +98,9 @@ string getInpName(int flag)
 			break;
 		case C_INP_AI:
 			return "AI";
+			break;
+		case C_INP_MOU:
+			return "Mouse";
 			break;
 	}
 	return "";
@@ -120,6 +131,20 @@ string getCoord(int X, int Y)
 		char ret[3] = {Y + 'A' - 1, X + '0', '\0'};
 		return string(ret);
 	}
+}
+
+void findClosest(int &X, int &Y, int x, int y) {
+	int i, j;
+	X = round((x - oriX) / gridSize) + 1;
+	Y = round((y - oriY) / gridSize) + 1;
+	if (!valid(X, Y))
+		X = Y = -1;
+}
+
+void onUp(iObject *th, int &x, int &y) {
+	// printf("*** You mouse-up'd (%d, %d)\n", x, y);
+	findClosest(mouseUpX, mouseUpY, x, y);
+	// printf("*** Verdict (X, Y) = (%d, %d)\n", mouseUpX, mouseUpY);
 }
 
 void initBoard()
@@ -264,6 +289,15 @@ void getInput(int flag, int &X, int &Y)
 				getRandomCoord(X, Y);
 			break;
 		}
+		case C_INP_MOU:
+		{
+			mouseUpX = mouseUpY = -1;
+			while (mouseUpX == -1 /* && mouseUpY == -1 */) 
+				waitKey(10);
+			X = mouseUpX;
+			Y = mouseUpY;
+			break;
+		}
 	}
 	if ( !(valid(X) && valid(Y) && board[X][Y] == 0) ) getRandomCoord(X, Y);
 }
@@ -300,7 +334,7 @@ void startGame()
 	int ret;
 	string msg;
 
-	msg = "Welcome to another round of Connect 6 !";
+	msg = "Welcome to another round of Connect6 !";
 	puts(msg.c_str());
 	if (output) tClientPtr -> sendMessage(msg);
 
@@ -333,7 +367,7 @@ void startGame()
 		ret = max(ret, detState(inpX2, inpY2));
 		if (ret != 0) break;
 
-		waitKey(1);
+		waitKey(10);
 	}
 	if (remainGrids == 0) ret = -1;
 
@@ -409,6 +443,7 @@ int main()
 
 	scene = new iScene(0, 0, 1000, 1000, 0, 0, 0, 0, &assetsImg[6]);
 	objBoard = scene->createObject(63, 127, 872, 872, 0, 0, 0, 0, &assetsImg[0], 255, true, false);
+	objBoard->onUp = onUp;
 	sceneActive = scene;
 
 

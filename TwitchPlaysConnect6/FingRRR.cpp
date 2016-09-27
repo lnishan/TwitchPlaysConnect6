@@ -998,6 +998,7 @@ bool inpMouse()
 		if (mouseDragging)
 		{
 			inputHandler(INPUT_RELEASE, mousePosX, mousePosY, prev_mousePosX, prev_mousePosY);
+			inputHandler(INPUT_UP, mousePosX, mousePosY, prev_mousePosX, prev_mousePosY);
 			mouseDragging = false;
 		}
 		else if (prev_mouseState == MOUSE_DOWN)
