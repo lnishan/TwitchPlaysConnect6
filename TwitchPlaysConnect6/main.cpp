@@ -25,7 +25,7 @@
 #define C_INP_AI 1
 #define C_INP_MOU 2
 
-#define C_TWI_LATENCY 12000 // ms
+#define C_TWI_LATENCY 20000 // ms
 #define C_TWI_DECIDE 10000 // ms
 
 using namespace std;

@@ -1,1 +1,0 @@
-(Black, White, Draw) = (14, 19, 17)

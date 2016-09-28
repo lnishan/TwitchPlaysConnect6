@@ -1,1 +1,0 @@
-(Black, White, Draw) = (138, 188, 174)
