@@ -214,9 +214,23 @@ void myAI(short b[AI_COORDS+1][AI_COORDS+1], short color, int &X, int &Y)
 	int midX = 1 + (AI_COORDS-1) / 2;
 	int midY = 1 + (AI_COORDS-1) / 2;
 
+	// calculate my risk
+	riskMax = -1;
+	dfs(b, 1, 2, color);
+	double riskMe = riskMax;
+	int riskMeX = riskX, riskMeY = riskY;
+
 	riskMax = -1;
 	dfs(b, 1, 2, 3 - color);
-	if (riskMax >= thresDef) // Defend !
+	double riskOppo = riskMax;
+
+	if (riskMe > riskOppo)
+	{
+		X = riskMeX;
+		Y = riskMeY;
+		return;
+	}
+	else if (riskMax >= thresDef) // Defend !
 	{
 		X = riskX;
 		Y = riskY;
@@ -224,10 +238,7 @@ void myAI(short b[AI_COORDS+1][AI_COORDS+1], short color, int &X, int &Y)
 	}
 	else
 	{
-		// treat myself as enemy
-		riskMax = -1;
-		dfs(b, 1, 2, color);
-		if (riskMax >= thresAtk) // Attack !
+		if (riskMe >= thresAtk) // Attack !
 		{
 			X = riskX;
 			Y = riskY;
