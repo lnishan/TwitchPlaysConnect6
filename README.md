@@ -1,4 +1,4 @@
-#TwitchPlaysConnect6
+# TwitchPlaysConnect6
 
 An **audience-sourced** [*Connect6*](https://en.wikipedia.org/wiki/Connect6) game hosted on [*TwitchTV*](https://www.twitch.tv/).
 
